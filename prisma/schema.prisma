@@ -1,0 +1,203 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+
+model campanha_token {
+
+    id_campanha_token Int  @id @default(autoincrement())
+    id_campanha Int
+    token String
+    utilizado Int
+    gerado Int
+    data_cadastrou DateTime? @default(now())
+
+    @@map("campanha_token")
+  
+}
+
+
+model userEmpresa{
+
+      id_user_empresa Int  @id @default(autoincrement())
+      id_empresa Int
+      id_user Int 
+      data_cadastrou DateTime? @default(now())
+      role Int ? @default(1)
+
+  @@map("userEmpresa")
+}
+
+  
+
+model usuario{
+
+      id_usuario Int  @id @default(autoincrement())
+      id_user Int 
+      cpf String
+      nome String
+      endereco String
+      bairro String
+      tipo String
+      cidade String
+      postalcode String
+      celular String
+      data_cadastrou DateTime? @default(now())
+      ativo Int ? @default(1)
+      numero String
+      data_nascimento DateTime ?
+
+  @@map("usuario")
+}
+
+
+
+model User{
+
+      id Int  @id @default(autoincrement())
+      name String
+      email String ?
+      password String
+      cpf  String ?
+      role Int ?
+      created_at DateTime? @default(now())
+      update_at DateTime? @default(now())
+
+  @@map("users")
+}
+
+model Resgate{
+
+      id_resgate Int  @id @default(autoincrement())
+      id_campanha Int
+      id_user Int 
+      id_user_realizou Int
+      data_cadastrou   DateTime? @default(now())
+      qtde_resgatado Int
+
+  @@map("resgate")
+}
+
+
+
+
+model empresa{
+
+      id_empresa Int  @id @default(autoincrement())
+      id_user Int 
+      nome_empresa String
+      cnpj String ?
+      data_cadastrou DateTime? @default(now())
+      ativo Int ? @default(1)
+
+  @@map("empresa")
+}
+
+model campanha_formulario{
+
+      id_campanha_formulario Int  @id @default(autoincrement())
+      token String
+      nome String 
+      email String
+      cpf String 
+      celular String 
+      data_cadastrou DateTime? @default(now())
+  @@map("campanha_formulario")
+}
+
+
+model campanha{
+
+      id_campanha Int  @id @default(autoincrement())
+      id_empresa Int 
+      nome_campanha String
+      data_inicio DateTime ?
+      data_fim DateTime ?
+      ativo Int ? @default(1)
+      qtde_servico Int
+      descricao String ?
+      id_user Int ?
+      gera_token Int ?
+      nro_campanha_cliente String ?
+      qtde_token Int ?
+
+  @@map("campanha")
+}
+
+
+model carimbo{
+
+      id_carimbo Int  @id @default(autoincrement())
+      id_user_carimbou Int
+      id_user Int 
+      id_campanha Int
+      data_carimbo DateTime? @default(now())
+      qtde_carimbo Int
+      id_resgate Int
+
+  @@map("carimbo")
+}
+
+
+
+model Category{
+  id String @id @default(uuid())
+  name String
+  created_at DateTime? @default(now())
+  update_at DateTime? @default(now())
+
+  @@map("categories")
+  products Product []
+}
+
+model Product{
+    id String @id @default(uuid())
+    name String
+    price String
+    description String
+    banner String
+    created_at DateTime? @default(now())
+    update_at DateTime? @default(now())
+
+    category Category @relation(fields: [category_id], references: [id])
+    @@map("products")
+
+  category_id String
+  items Item[]
+
+}
+
+model Order{
+    id String @id @default(uuid())
+    table Int
+    status Boolean @default(false)
+    draft Boolean @default(true)
+    name String?
+    created_at DateTime? @default(now())
+    update_at DateTime? @default(now())
+
+    @@map("orders")
+
+    items Item []
+
+}
+
+model Item {
+    id String @id @default(uuid())
+    amount Int
+    created_at DateTime? @default(now())
+    update_at DateTime? @default(now())
+    order Order @relation(fields: [order_id], references: [id])
+    product Product @relation(fields: [product_id], references: [id])
+    @@map("items")
+    order_id String
+    product_id String
+}
